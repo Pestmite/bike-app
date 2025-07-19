@@ -1,0 +1,19 @@
+.body {
+  padding: 0px;
+}
+
+.main-grid {
+  display: grid;
+  margin: 80px 30px 30px 30px;
+  height: calc(100vh - 140px);
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 50% 50%;
+  row-gap: 30px;
+  column-gap: 30px;
+}
+
+.dashboard-item {
+  background-color: var(--background);
+  border-radius: 8px;
+  padding: 20px;
+}

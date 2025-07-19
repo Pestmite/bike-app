@@ -1,0 +1,30 @@
+@import url(./colorTheme.css);
+
+body {
+  font-family: roboto, Helvetica, sans-serif;
+  font-size: 18px;
+  margin: 0px;
+
+  overflow-x: hidden;
+  overscroll-behavior: none;
+  background-color: var(--foreground);
+  color: var(--text);
+}
+
+body.active {
+  overflow-y: hidden;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  padding: 88px 50px;
+}
+
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  color: var(--text);
+  background-color: var(--background);
+}
