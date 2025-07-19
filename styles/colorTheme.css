@@ -1,34 +1,11 @@
 :root {
   --background: white;
-  --foreground: rgb(236,240,244);
-  --foreground-contrast: rgb(244, 244, 244);
-  --foreground-dark: rgb(207, 214, 220);
-  --foreground-hover: rgb(208, 212, 215);
-  --highlight: rgb(0, 154, 0);
-  --highlight-hover: rgb(0, 188, 0);
-  --secondary-highlight: rgb(130, 213, 20);
-  --saturated: rgb(160, 160, 160);
   --text: black;
-  --secondary-text: rgb(97, 97, 97);
-  --tertiary-text: rgb(110, 125, 147);
-  --highlight-text: white;
-  --tag: rgb(76, 76, 76);
-  --danger: rgb(255, 114, 114);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: rgb(48, 48, 48);
-    --foreground: rgb(15, 15, 15);
-    --foreground-contrast: rgb(48, 48, 48);
-    --foreground-hover: rgb(55, 55, 55);
-    --highlight: rgb(0, 125, 0);
-    --highlight-hover: rgb(0, 184, 0);
-    --text: rgb(241, 241, 241);
-    --secondary-text: rgb(195, 195, 195);
-    --tertiary-text: rgb(156, 168, 185);
-    --highlight-text: rgb(230, 230, 230);
-    --tag: rgb(15, 15, 15);
-    --danger: rgb(155, 28, 28);
+    --background: rgb(24, 24, 24);
+    --text: rgb(247, 247, 247);
   }
 }

@@ -14,17 +14,3 @@ body {
 body.active {
   overflow-y: hidden;
 }
-
-.body {
-  display: flex;
-  flex-direction: column;
-  height: auto;
-  padding: 88px 50px;
-}
-
-select {
-  -webkit-appearance: none;
-  appearance: none;
-  color: var(--text);
-  background-color: var(--background);
-}
