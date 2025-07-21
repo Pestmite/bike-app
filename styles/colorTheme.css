@@ -3,9 +3,9 @@
   --text: black;
 }
 
-@media (prefers-color-scheme: dark) {
+/*@media (prefers-color-scheme: dark) {
   :root {
     --background: rgb(24, 24, 24);
     --text: rgb(247, 247, 247);
   }
-}
+}*/

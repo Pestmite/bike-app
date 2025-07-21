@@ -56,8 +56,10 @@
 					this._routeDone(routes, wps, callback, context);
 				}, this))
 				.catch(function (err) {
-					// Error!
-					console.error(err);
+					callback.call(context, {
+						status: -1,
+						message: 'Route error'
+					});
 				});
 
 			return this;
