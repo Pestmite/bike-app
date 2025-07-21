@@ -7,18 +7,23 @@ const body = document.querySelector('.body');
 body.innerHTML = `
   <div class="map-container">
     <div id="map" class="map">
-      <div id="status-message" class="status"></div>
+      <div class="status status-js"></div>
+      <div class="ride-info ride-info-js"></div>
     </div>
   </div>
 `;
 
-const status_message = document.getElementById('status-message');
+const status_message = document.querySelector('.status-js');
+const ride_info = document.querySelector('.ride-info-js');
 
 function showStatus(msg) {
   status_message.innerHTML = msg;
 }
 
-const map = L.map('map', { attributionControl:false }).setView([45.5019, -73.5674], 13); 
+const map = L.map('map', {
+  attributionControl: false,
+  zoomControl: false,
+}).setView([45.5019, -73.5674], 13); 
 
 L.tileLayer(atlasMap, {
   maxZoom: 20,
@@ -46,15 +51,17 @@ map.on('click', function (e) {
     showStatus('Finding the best route...');
     routingControl = L.Routing.control({
       waypoints: [start, end],
-      showAlternatives: true,
-      routeWhileDragging: true,
-    
       router: new L.Routing.OpenRouteServiceV2(ROUTE_KEY, {
         profile: 'cycling-regular',
       }),
+      routeWhileDragging: true,
+      lineOptions: {
+        styles: [{ color: 'rgb(73, 149, 255)', opacity: 0.8, weight: 5}]
+      },
     })
       .on('routesfound', function () {
         showStatus('Route found!')
+        ride_info.classList.add('info-shown')
       })
       .on('routingerror', function () {
         showStatus('Cannot find a route');

@@ -25,3 +25,24 @@
   font-size: 14px;
   z-index: 500;
 }
+
+.leaflet-routing-container {
+  display: none !important;
+}
+
+.ride-info {
+  position: absolute;
+  bottom: -40vh;
+  left: 0px;
+  right: 0px;
+  height: 36vh;
+  border-radius: 50px 50px 0px 0px;
+  box-shadow: 0 0 6px rgba(49, 49, 49, 0.3);
+  z-index: 500;
+  background-color: rgb(236, 238, 241);
+  transition: bottom 0.4s;
+}
+
+.info-shown {
+  bottom: 0;
+}
