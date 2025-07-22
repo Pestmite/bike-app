@@ -35,10 +35,10 @@
 /* General Info Section */
 .ride-info {
   position: absolute;
-  bottom: -80vh;
+  bottom: -100vh;
   left: 0px;
   right: 0px;
-  height: 26vh;
+  height: 76vh;
   border-radius: 50px 50px 0px 0px;
   box-shadow: 0 0 6px rgba(49, 49, 49, 0.3);
   z-index: 500;
@@ -55,7 +55,11 @@
   width: 100%;
 }
 
-.info-shown {
+.basic-info-shown {
+  bottom: -52vh;
+}
+
+.full-info-shown {
   bottom: 0;
 }
 

@@ -22,6 +22,7 @@ const body = document.querySelector('.body');
 const status_message = document.querySelector('.status-js');
 const ride_info = document.querySelector('.ride-info-js');
 const infoX = document.querySelector('.info-x');
+const moreInfoButton = document.querySelector('.more-info');
 
 function showStatus(msg) {
   status_message.innerHTML = msg;
@@ -72,7 +73,7 @@ map.on('click', function (e) {
     })
       .on('routesfound', function () {
         showStatus('Route found!')
-        ride_info.classList.add('info-shown')
+        ride_info.classList.add('basic-info-shown')
       })
       .on('routingerror', function () {
         showStatus('Cannot find a route');
@@ -85,5 +86,17 @@ map.on('click', function (e) {
 });
 
 infoX.addEventListener('click', () => {
-  ride_info.classList.remove('info-shown');
+  ride_info.classList.remove('basic-info-shown');
+  ride_info.classList.remove('full-info-shown');
+  moreInfoButton.innerHTML = 'Hide itinerary';
+});
+
+moreInfoButton.addEventListener('click', () => {
+  ride_info.classList.toggle('full-info-shown');
+  if (moreInfoButton.innerHTML === 'View itinerary') {
+    moreInfoButton.innerHTML = 'Hide itinerary';
+  } else {
+    console.log('Yo');
+    moreInfoButton.innerHTML = 'View itinerary';
+  }
 });
