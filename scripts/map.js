@@ -4,7 +4,7 @@ const atlasMap = `https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=${
 
 const body = document.querySelector('.body');
 
-body.innerHTML = `
+/*body.innerHTML = `
   <div class="map-container">
       <div id="map" class="map">
         <div class="status status-js"></div>
@@ -17,7 +17,7 @@ body.innerHTML = `
       </div>
       </div>
     </div>
-`;
+`;*/
 
 const status_message = document.querySelector('.status-js');
 const ride_info = document.querySelector('.ride-info-js');
@@ -67,7 +67,7 @@ map.on('click', function (e) {
 
       routeWhileDragging: true,
       lineOptions: {
-        styles: [{ color: 'rgb(73, 149, 255)', opacity: 0.8, weight: 5}]
+        styles: [{ color: 'rgb(0, 153, 255)', opacity: 0.8, weight: 5}]
       },
     })
       .on('routesfound', function () {
