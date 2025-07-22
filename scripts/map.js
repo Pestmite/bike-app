@@ -6,15 +6,22 @@ const body = document.querySelector('.body');
 
 body.innerHTML = `
   <div class="map-container">
-    <div id="map" class="map">
-      <div class="status status-js"></div>
-      <div class="ride-info ride-info-js"></div>
+      <div id="map" class="map">
+        <div class="status status-js"></div>
+        <div class="ride-info ride-info-js">
+        <div class="upper">
+          <div class="info-x">X</div>
+        </div>
+        <div>Distance</div>
+        <div>Tags</div>
+      </div>
+      </div>
     </div>
-  </div>
 `;
 
 const status_message = document.querySelector('.status-js');
 const ride_info = document.querySelector('.ride-info-js');
+const infoX = document.querySelector('.info-x');
 
 function showStatus(msg) {
   status_message.innerHTML = msg;
@@ -36,6 +43,9 @@ let startPoint;
 
 showStatus('Pick a first point')
 map.on('click', function (e) {
+  if (ride_info.contains(e.originalEvent.target)) {
+    return
+  }
   if (!start) {
     start = e.latlng;
     showStatus('Pick a Second point');
@@ -54,6 +64,7 @@ map.on('click', function (e) {
       router: new L.Routing.OpenRouteServiceV2(ROUTE_KEY, {
         profile: 'cycling-regular',
       }),
+
       routeWhileDragging: true,
       lineOptions: {
         styles: [{ color: 'rgb(73, 149, 255)', opacity: 0.8, weight: 5}]
@@ -71,4 +82,8 @@ map.on('click', function (e) {
     start = null;
     startPoint.remove()
   }
+});
+
+infoX.addEventListener('click', () => {
+  ride_info.classList.remove('info-shown');
 });
