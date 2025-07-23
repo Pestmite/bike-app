@@ -1,8 +1,16 @@
-export function distanceRound(num) {
+const miToFt = 5280;
+const kmToM = 1000;
+
+export function distanceRound(num, metric = true) {
   const intDigits = Math.floor(Math.log10(Math.abs(num) || 1)) + 1;
-  const decimals = Math.max(0, 2 - intDigits);
+  const decimals = Math.max(0, 3 - intDigits);
   const factor = Math.pow(10, decimals);
-  return Math.round((Math.round(num * factor) / factor) * 100) / 100;
+  const distance = Math.round((Math.round(num * factor) / factor) * 100) / 100
+  if (metric) {
+    return distance >= 1 ? distance + ' km' : Math.round(num  * kmToM) + ' m';
+  } else {
+    return distance >= 1 ? distance + ' mi' : Math.round(num * miToFt) + ' ft';
+  }
 }
 
 export function formatTime(min) {

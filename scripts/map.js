@@ -30,11 +30,9 @@ let routingControl;
 let start = null;
 let startPoint;
 
-showStatus('Pick a first point')
+showStatus('Pick a first point');
 map.on('click', function (e) {
-  if (ride_info.contains(e.originalEvent.target)) {
-    return
-  }
+  if (ride_info.contains(e.originalEvent.target)) return
   if (!start) {
     start = e.latlng;
     showStatus('Pick a Second point');
@@ -65,11 +63,13 @@ map.on('click', function (e) {
     })
       .on('routesfound', function (e) {
         const route = e.routes[0].summary
+
         showStatus('Route found!');
         ride_info.classList.add('basic-info-shown');
 
-        distanceStat.innerHTML = `${distanceRound(route.totalDistance / 1000)} km <span>${distanceRound(route.totalDistance / 1000 * kmToMi)} mi</span>`;
-        timeStat.innerHTML = `${formatTime(route.totalDistance / 1000 / kmPerHour * 100)}`;
+        distanceStat.innerHTML = `${distanceRound(route.totalDistance / 1000)}<span>${distanceRound((route.totalDistance / 1000 * kmToMi), false)}</span>`;
+        timeStat.innerHTML = `${formatTime(route.totalTime / 60)}`;
+        console.log(e.routes[0]);
       })
       .on('routingerror', function () {
         showStatus('Sorry! Cannot find a route');
@@ -77,7 +77,7 @@ map.on('click', function (e) {
     .addTo(map); 
 
     start = null;
-    startPoint.remove()
+    startPoint.remove();
   }
 });
 
