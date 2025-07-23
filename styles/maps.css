@@ -43,7 +43,7 @@
   box-shadow: 0 0 6px rgba(49, 49, 49, 0.3);
   z-index: 500;
   background-color: rgb(255, 255, 255);
-  transition: bottom 0.4s;
+  transition: bottom 0.4s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -84,10 +84,12 @@
 
 .info-x {
   cursor: pointer;
-  background-color: rgb(214, 214, 214);
-  height: 30px;
-  width: 30px;
-  text-align: center;
+  background-color: rgb(226, 226, 226);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  width: 32px;
   border: none;
   font-size: 20px;
   font-weight: 800;
@@ -137,7 +139,7 @@
   padding: 8px 14px;
   border-radius: 16px;
   border: none;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease;
 }
 
 .more-info:hover {
@@ -149,30 +151,59 @@
 .elevation-section {
   font-size: 18px;
   margin-top: 50px;
-  transition: margin 0.3s;
+  transition: margin 0.3s ease;
+  border-bottom: solid rgb(219, 219, 219);
 }
 
 .elevation-section-show {
   margin-top: 0px;
 }
 
+.elevation-upper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.elevation-section h3 {
+  margin: 20px 0px 12px 0px;
+}
+
+.elevation-upper button {
+  height: 32px;
+  width: 32px;
+  background-color: transparent;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  transition: transform 0.5s ease;
+}
+
+.elevation-rotated {
+  transform: rotate(360deg);
+}
+
 .elevation-chart {
   width: 100% !important;
+  height: 0 !important;
+  overflow: hidden;
   max-width: 400px;
+  transition: height 0.4s ease;
+}
+
+.elevation-map-shown {
+  margin-bottom: 20px;
+  height: 200px !important;
 }
 
 /* | Itinerary Section */
 .itinerary-section {
-  margin-top: 80px;
+  margin-top: 20px;
   min-height: 0;
-  max-height: 400px;
+  max-height: 800px;
   overflow-y: auto;
   width: 100%;
-  transition: margin 0.3s;
-}
-
-.itinerary-show {
-  margin-top: 20px;
+  transition: margin 0.3s ease;
 }
 
 .instruction-group {

@@ -12,6 +12,8 @@ const timeStat = document.querySelector('.time-js');
 const elevationSection = document.querySelector('.elevation-section');
 const itinerarySection = document.querySelector('.itinerary-section');
 const pathName = document.querySelector('.path-name');
+const elevationButton = document.querySelector('.elevation-button-js');
+const elevationMap = document.querySelector('.elevation-chart');
 
 const kmToMi = 0.621371;
 
@@ -28,10 +30,6 @@ L.tileLayer(atlasMap, {
   maxZoom: 20,
   minZoom: 2
 }).addTo(map);
-
-let routingControl;
-let start = null;
-let startPoint;
 
 async function reverseGeocode(lat, lon) {
   const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
@@ -72,7 +70,14 @@ async function getElevationProfile(coords) {
 }
 
 async function generateElevationSection(e) {
-  const coordinates = e.routes[0].coordinates.map(coord => [coord[1], coord[0]]);
+  const maxPoints = 300;
+  let coordinates = e.routes[0].coordinates.map(coord => [coord[1], coord[0]]);
+
+  // For performance on long paths
+  if (coordinates.length > maxPoints) {
+    const step = Math.floor(coordinates.length / maxPoints);
+    coordinates = coordinates.filter((_, i) => i % step === 0);
+  }
   const elevationData = await getElevationProfile(coordinates);
   const elevationArray = [];
   elevationData.geometry.coordinates.forEach(dataPoint => elevationArray.push(dataPoint[2]));
@@ -94,6 +99,10 @@ async function generateBasicInfo(e, end) {
   }
   if (destinationAddress.city) {
     pathName.innerHTML += destinationAddress.city + ' ';
+  } else if (destinationAddress.town) {
+    pathName.innerHTML += destinationAddress.town + ' ';
+  } else {
+    pathName.innerHTML += destinationAddress.state + ' '
   }
   if (destinationAddress.postcode) {
     pathName.innerHTML += `<span class="postal-code">${destinationAddress.postcode}</span>`;
@@ -119,14 +128,33 @@ function generateItinerary(e) {
   });
 }
 
+let routingControl;
+let start = null;
+let startPoint;
+let endPoint;
+let pathData;
+
 showStatus('Pick a first point');
 map.on('click', function (e) {
   if (ride_info.contains(e.originalEvent.target)) return
   if (!start) {
+    if (startPoint) map.removeLayer(startPoint);
+    if (endPoint) map.removeLayer(endPoint);
     start = e.latlng;
 
+    map.createPane('markerPane');
+    map.getPane('markerPane').style.zIndex = 650;
+
     showStatus('Pick a Second point');
-    startPoint = L.marker(start).addTo(map);
+    startPoint = L.circleMarker(start, {
+      radius: 8,
+      color: 'rgb(0, 153, 255)',
+      fillColor: 'rgb(207, 207, 207)',
+      weight: 4,
+      opacity: 1,
+      fillOpacity: 1,
+      pane: 'markerPane'
+    }).addTo(map);
 
     if (routingControl) {
       map.removeControl(routingControl);
@@ -134,6 +162,7 @@ map.on('click', function (e) {
 
   } else {
     const end = e.latlng;
+    endPoint = L.marker(end).addTo(map);
 
     if (start === end) {
       showStatus('Please pick a different endpoint.');
@@ -143,8 +172,10 @@ map.on('click', function (e) {
     showStatus('Finding the best route...');
     routingControl = L.Routing.control({
       waypoints: [start, end],
+      createMarker: () => null,
       router: new L.Routing.OpenRouteServiceV2(ROUTE_KEY, {
         profile: 'cycling-regular',
+        extra_info: ["steepness", "surface", "suitability", "waytype", "road_access"],
       }),
 
       routeWhileDragging: true,
@@ -160,35 +191,63 @@ map.on('click', function (e) {
         ride_info.classList.add('basic-info-shown');
 
         generateItinerary(e);
-        generateElevationSection(e);
+        pathData = e;
       })
       .on('routingerror', function () {
         showStatus('Sorry! Cannot find a route');
       })
-    .addTo(map); 
-
+      .addTo(map);
+    
     start = null;
-    startPoint.remove();
   }
 });
 
 infoX.addEventListener('click', () => {
   ride_info.classList.remove('basic-info-shown');
   ride_info.classList.remove('full-info-shown');
-  itinerarySection.classList.remove('itinerary-show');
+  elevationSection.classList.remove('elevation-section-show');
   moreInfoButton.innerHTML = 'View itinerary';
+  
 });
 
 moreInfoButton.addEventListener('click', () => {
-  ride_info.classList.toggle('full-info-shown');
-  if (moreInfoButton.innerHTML === 'View itinerary') {
+  const isFull = ride_info.classList.toggle('full-info-shown');
+  elevationSection.classList.toggle('elevation-section-show');
+
+  if (isFull) {
     moreInfoButton.innerHTML = 'Hide itinerary';
-    itinerarySection.classList.add('itinerary-show');
     elevationSection.classList.add('elevation-section-show');
+
+    map.dragging.disable();
+    map.scrollWheelZoom.disable();
+    map.doubleClickZoom.disable();
+    map.touchZoom.disable();
+    map.keyboard.disable();
   } else {
     moreInfoButton.innerHTML = 'View itinerary';
-    itinerarySection.classList.remove('itinerary-show');
     elevationSection.classList.remove('elevation-section-show');
+
+    map.dragging.enable();
+    map.scrollWheelZoom.enable();
+    map.doubleClickZoom.enable();
+    map.touchZoom.enable();
+    map.keyboard.enable();
+  }
+});
+
+elevationButton.addEventListener('click', () => {
+  elevationMap.classList.toggle('elevation-map-shown');
+  elevationButton.classList.toggle('elevation-rotated');
+  if (!elevationMap.classList.contains('loaded')) {
+    generateElevationSection(pathData);
+    elevationMap.classList.add('loaded')
+  }
+  
+
+  if (elevationButton.innerHTML === '-') {
+    elevationButton.innerHTML = '+';
+  } else {
+    elevationButton.innerHTML = '-';
   }
 });
 

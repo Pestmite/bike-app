@@ -45,7 +45,6 @@
 
         <section class="lower">
           <section class="tag-section">
-            <p class="route-tag">Partially paved</p>
             <p class="route-tag">Mostly Flat</p>
           </section>
 
@@ -53,8 +52,12 @@
         </section>
 
         <section class="elevation-section">
-          <h3>Elevation Section</h3>
-          <canvas height="200px" class="elevation-chart" id="elevation-chart-js"></canvas>
+          <div class="elevation-upper">
+            <h3>Elevation Map</h3>
+            <button class="elevation-button-js">+</button>
+          </div>
+          
+          <canvas height="200px" width="400" class="elevation-chart" id="elevation-chart-js"></canvas>
         </section>
         <section class="itinerary-section"></section>
       </div>
