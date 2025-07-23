@@ -38,7 +38,7 @@
   bottom: -100vh;
   left: 0px;
   right: 0px;
-  height: 76vh;
+  height: 86vh;
   border-radius: 50px 50px 0px 0px;
   box-shadow: 0 0 6px rgba(49, 49, 49, 0.3);
   z-index: 500;
@@ -56,7 +56,7 @@
 }
 
 .basic-info-shown {
-  bottom: -52vh;
+  bottom: -62vh;
 }
 
 .full-info-shown {
@@ -66,13 +66,29 @@
 /* | X section */
 .upper {
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
+  align-items: center;
   font-weight: 800;
   font-size: 20px;
 }
 
+.path-name {
+  font-size: 22px;
+  width: 80%;
+}
+
+.postal-code {
+  color: rgb(142, 142, 142);
+  font-size: 18px;
+}
+
 .info-x {
   cursor: pointer;
+  background-color: rgb(214, 214, 214);
+  height: 30px;
+  width: 30px;
+  text-align: center;
+  border-radius: 50%;
 }
 
 /* | Overview Info */

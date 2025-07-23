@@ -9,6 +9,7 @@ const moreInfoButton = document.querySelector('.more-info');
 const distanceStat = document.querySelector('.distance-js');
 const timeStat = document.querySelector('.time-js');
 const itinerarySection = document.querySelector('.itinerary-section');
+const pathName = document.querySelector('.path-name');
 
 const kmToMi = 0.621371;
 
@@ -30,11 +31,19 @@ let routingControl;
 let start = null;
 let startPoint;
 
+async function reverseGeocode(lat, lon) {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
+  const response = await fetch(url);
+  const data = await response.json();
+  return data;
+}
+
 showStatus('Pick a first point');
 map.on('click', function (e) {
   if (ride_info.contains(e.originalEvent.target)) return
   if (!start) {
     start = e.latlng;
+
     showStatus('Pick a Second point');
     startPoint = L.marker(start).addTo(map);
 
@@ -44,6 +53,7 @@ map.on('click', function (e) {
 
   } else {
     const end = e.latlng;
+
     if (start === end) {
       showStatus('Please pick a different endpoint.');
       return;
@@ -61,10 +71,26 @@ map.on('click', function (e) {
         styles: [{ color: 'rgb(0, 153, 255)', opacity: 0.8, weight: 5}]
       },
     })
-      .on('routesfound', function (e) {
-        const route = e.routes[0].summary
+      .on('routesfound', async function (e) {
+        const route = e.routes[0].summary;
+        const reverseData = await reverseGeocode(end.lat, end.lng);
+        const destinationAddress = reverseData.address;
 
         showStatus('Route found!');
+
+        pathName.innerHTML = '';
+        if (destinationAddress.house) {
+          pathName.innerHTML += destinationAddress.house + ' ';
+        }
+        if (destinationAddress.road) {
+          pathName.innerHTML += destinationAddress.road + ', ';
+        }
+        if (destinationAddress.city) {
+          pathName.innerHTML += destinationAddress.city + ' ';
+        }
+        if (destinationAddress.postcode) {
+          pathName.innerHTML += `<span class="postal-code">${destinationAddress.postcode}</span>`;
+        }
         ride_info.classList.add('basic-info-shown');
 
         distanceStat.innerHTML = `${distanceRound(route.totalDistance / 1000)}<span>${distanceRound((route.totalDistance / 1000 * kmToMi), false)}</span>`;
