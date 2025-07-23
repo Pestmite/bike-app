@@ -183,6 +183,14 @@
   transform: rotate(360deg);
 }
 
+.loading-done {
+  display: none;
+}
+
+.loading-elevation {
+  display: block;
+}
+
 .elevation-chart {
   width: 100% !important;
   height: 0 !important;

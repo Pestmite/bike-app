@@ -14,6 +14,7 @@ const itinerarySection = document.querySelector('.itinerary-section');
 const pathName = document.querySelector('.path-name');
 const elevationButton = document.querySelector('.elevation-button-js');
 const elevationMap = document.querySelector('.elevation-chart');
+const loading = document.querySelector('.loading-done');
 
 const kmToMi = 0.621371;
 
@@ -79,6 +80,10 @@ async function generateElevationSection(e) {
     coordinates = coordinates.filter((_, i) => i % step === 0);
   }
   const elevationData = await getElevationProfile(coordinates);
+  if (!elevationData) {
+    elevationMap.innerHTML = "Could not load elevation data.";
+    return;
+  }
   const elevationArray = [];
   elevationData.geometry.coordinates.forEach(dataPoint => elevationArray.push(dataPoint[2]));
 
@@ -97,13 +102,8 @@ async function generateBasicInfo(e, end) {
   if (destinationAddress.road) {
     pathName.innerHTML += destinationAddress.road + ', ';
   }
-  if (destinationAddress.city) {
-    pathName.innerHTML += destinationAddress.city + ' ';
-  } else if (destinationAddress.town) {
-    pathName.innerHTML += destinationAddress.town + ' ';
-  } else {
-    pathName.innerHTML += destinationAddress.state + ' '
-  }
+  const locationName = destinationAddress.city || destinationAddress.town || destinationAddress.state || '';
+  pathName.innerHTML += locationName + ' ';
   if (destinationAddress.postcode) {
     pathName.innerHTML += `<span class="postal-code">${destinationAddress.postcode}</span>`;
   }
@@ -190,6 +190,7 @@ map.on('click', function (e) {
         ride_info.classList.add('basic-info-shown');
 
         generateItinerary(e);
+        elevationMap.classList.remove('loaded');
         pathData = e;
       })
       .on('routingerror', function () {
@@ -207,13 +208,18 @@ infoX.addEventListener('click', () => {
   elevationSection.classList.remove('elevation-section-show');
   moreInfoButton.innerHTML = 'View itinerary';
   
+  map.dragging.enable();
+  map.scrollWheelZoom.enable();
+  map.doubleClickZoom.enable();
+  map.touchZoom.enable();
+  map.keyboard.enable();
 });
 
 moreInfoButton.addEventListener('click', () => {
-  const isFull = ride_info.classList.toggle('full-info-shown');
+  ride_info.classList.toggle('full-info-shown');
   elevationSection.classList.toggle('elevation-section-show');
 
-  if (isFull) {
+  if (ride_info.classList.contains('full-info-shown')) {
     moreInfoButton.innerHTML = 'Hide itinerary';
     elevationSection.classList.add('elevation-section-show');
 
@@ -234,12 +240,15 @@ moreInfoButton.addEventListener('click', () => {
   }
 });
 
-elevationButton.addEventListener('click', () => {
+elevationButton.addEventListener('click', async () => {
   elevationMap.classList.toggle('elevation-map-shown');
   elevationButton.classList.toggle('elevation-rotated');
+
   if (!elevationMap.classList.contains('loaded')) {
-    generateElevationSection(pathData);
-    elevationMap.classList.add('loaded')
+    loading.classList.add('loading-elevation');
+    await generateElevationSection(pathData);
+    loading.classList.remove('loading-elevation');
+    elevationMap.classList.add('loaded');
   }
   
 
