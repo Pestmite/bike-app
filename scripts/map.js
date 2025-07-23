@@ -38,6 +38,38 @@ async function reverseGeocode(lat, lon) {
   return data;
 }
 
+async function getElevationProfile(coords) {
+  const url = 'https://api.openrouteservice.org/elevation/line';
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': ROUTE_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        format_in: 'geojson',
+        format_out: 'geojson',
+        geometry: {
+          type: 'LineString',
+          coordinates: coords
+        }
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error('Elevation API error');
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.error('Elevation error:', err);
+    return null;
+  }
+}
+
+
 showStatus('Pick a first point');
 map.on('click', function (e) {
   if (ride_info.contains(e.originalEvent.target)) return
@@ -76,8 +108,6 @@ map.on('click', function (e) {
         const reverseData = await reverseGeocode(end.lat, end.lng);
         const destinationAddress = reverseData.address;
 
-        showStatus('Route found!');
-
         pathName.innerHTML = '';
         if (destinationAddress.house) {
           pathName.innerHTML += destinationAddress.house + ' ';
@@ -91,13 +121,20 @@ map.on('click', function (e) {
         if (destinationAddress.postcode) {
           pathName.innerHTML += `<span class="postal-code">${destinationAddress.postcode}</span>`;
         }
-        ride_info.classList.add('basic-info-shown');
 
         distanceStat.innerHTML = `${distanceRound(route.totalDistance / 1000)}<span>${distanceRound((route.totalDistance / 1000 * kmToMi), false)}</span>`;
         timeStat.innerHTML = `${formatTime(route.totalTime / 60)}`;
 
-        itinerarySection.innerHTML = '';
+        showStatus('Route found!');
+        ride_info.classList.add('basic-info-shown');
+
+        const coordinates = e.routes[0].coordinates.map(coord => [coord[1], coord[0]]);
+        const elevationData = await getElevationProfile(coordinates);
+        const elevationArray = [];
+        elevationData.geometry.coordinates.forEach(dataPoint => elevationArray.push(dataPoint[2]));
+
         let totalTime = 0;
+        itinerarySection.innerHTML = '';
         e.routes[0].instructions.forEach(instruction => {
           totalTime += instruction.time / 60;
           itinerarySection.innerHTML += `
