@@ -8,9 +8,9 @@ const infoX = document.querySelector('.info-x');
 const moreInfoButton = document.querySelector('.more-info');
 const distanceStat = document.querySelector('.distance-js');
 const timeStat = document.querySelector('.time-js');
+const itinerarySection = document.querySelector('.itinerary-section');
 
-const kmToMi = 0.621371
-const kmPerHour = 16
+const kmToMi = 0.621371;
 
 function showStatus(msg) {
   status_message.innerHTML = msg;
@@ -69,7 +69,20 @@ map.on('click', function (e) {
 
         distanceStat.innerHTML = `${distanceRound(route.totalDistance / 1000)}<span>${distanceRound((route.totalDistance / 1000 * kmToMi), false)}</span>`;
         timeStat.innerHTML = `${formatTime(route.totalTime / 60)}`;
-        console.log(e.routes[0]);
+
+        itinerarySection.innerHTML = '';
+        let totalTime = 0;
+        e.routes[0].instructions.forEach(instruction => {
+          totalTime += instruction.time / 60;
+          itinerarySection.innerHTML += `
+          <div class="instruction-group">
+            <p>${instruction.text}</p>
+            <div class="right-instructions">
+              <div class="instructions-distance">${distanceRound(instruction.distance / 1000)}</div>
+              <div class="instructions-time"> Total: ${formatTime(totalTime)}</div>
+            </div>
+          </div>`
+        });
       })
       .on('routingerror', function () {
         showStatus('Sorry! Cannot find a route');
@@ -84,15 +97,21 @@ map.on('click', function (e) {
 infoX.addEventListener('click', () => {
   ride_info.classList.remove('basic-info-shown');
   ride_info.classList.remove('full-info-shown');
-  moreInfoButton.innerHTML = 'Hide itinerary';
+  itinerarySection.classList.remove('itinerary-show');
+  moreInfoButton.innerHTML = 'View itinerary';
 });
 
 moreInfoButton.addEventListener('click', () => {
   ride_info.classList.toggle('full-info-shown');
   if (moreInfoButton.innerHTML === 'View itinerary') {
     moreInfoButton.innerHTML = 'Hide itinerary';
+    itinerarySection.classList.add('itinerary-show');
   } else {
-    console.log('Yo');
     moreInfoButton.innerHTML = 'View itinerary';
+    itinerarySection.classList.remove('itinerary-show');
   }
+});
+
+['wheel', 'touchstart', 'touchmove'].forEach(event => {
+  itinerarySection.addEventListener(event, e => e.stopPropagation(), { passive: false });
 });

@@ -14,5 +14,5 @@ export function distanceRound(num, metric = true) {
 }
 
 export function formatTime(min) {
-  return Math.floor(min / 60) == 0 ? Math.floor(min % 60) + " min" : Math.floor(min / 60) + "h " + Math.floor(min % 60) + "min";
+  return Math.floor(min / 60) == 0 ? Math.floor(min % 60) + " min" : Math.floor(min / 60) + "h " + Math.floor(min % 60) + " min";
 }
