@@ -1,28 +1,16 @@
 import { MAP_API, ROUTE_KEY } from '../keys.js';
+import { distanceRound, formatTime } from './utils.js';
 
 const atlasMap = `https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=${MAP_API}`
-
-const body = document.querySelector('.body');
-
-/*body.innerHTML = `
-  <div class="map-container">
-      <div id="map" class="map">
-        <div class="status status-js"></div>
-        <div class="ride-info ride-info-js">
-        <div class="upper">
-          <div class="info-x">X</div>
-        </div>
-        <div>Distance</div>
-        <div>Tags</div>
-      </div>
-      </div>
-    </div>
-`;*/
-
 const status_message = document.querySelector('.status-js');
 const ride_info = document.querySelector('.ride-info-js');
 const infoX = document.querySelector('.info-x');
 const moreInfoButton = document.querySelector('.more-info');
+const distanceStat = document.querySelector('.distance-js');
+const timeStat = document.querySelector('.time-js');
+
+const kmToMi = 0.621371
+const kmPerHour = 16
 
 function showStatus(msg) {
   status_message.innerHTML = msg;
@@ -58,6 +46,10 @@ map.on('click', function (e) {
 
   } else {
     const end = e.latlng;
+    if (start === end) {
+      showStatus('Please pick a different endpoint.');
+      return;
+    }
 
     showStatus('Finding the best route...');
     routingControl = L.Routing.control({
@@ -71,12 +63,16 @@ map.on('click', function (e) {
         styles: [{ color: 'rgb(0, 153, 255)', opacity: 0.8, weight: 5}]
       },
     })
-      .on('routesfound', function () {
-        showStatus('Route found!')
-        ride_info.classList.add('basic-info-shown')
+      .on('routesfound', function (e) {
+        const route = e.routes[0].summary
+        showStatus('Route found!');
+        ride_info.classList.add('basic-info-shown');
+
+        distanceStat.innerHTML = `${distanceRound(route.totalDistance / 1000)} km <span>${distanceRound(route.totalDistance / 1000 * kmToMi)} mi</span>`;
+        timeStat.innerHTML = `${formatTime(route.totalDistance / 1000 / kmPerHour * 100)}`;
       })
       .on('routingerror', function () {
-        showStatus('Cannot find a route');
+        showStatus('Sorry! Cannot find a route');
       })
     .addTo(map); 
 
