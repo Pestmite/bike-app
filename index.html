@@ -17,8 +17,9 @@
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
   
   <script src="node_modules/openrouteservice-js/dist/ors-js-client.umd.cjs"></script>
-
   <script src="scripts/L.Routing.OpenRouteServiceV2.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <title>GoTrails | Home</title>
   <link rel="shortcut icon" href="images/bicycle.png" type="image/x-icon">
@@ -51,6 +52,7 @@
           <div><button class="more-info">View itinerary</button></div>
         </div>
 
+        <canvas width="400" height="200" id="elevation-chart-js"></canvas>
         <div class="itinerary-section"></div>
       </div>
     </div>

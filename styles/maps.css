@@ -142,10 +142,12 @@
   background-color: rgb(56, 168, 243);
 }
 
+/* | Elevation Section */
+
+
 /* | Itinerary Section */
 .itinerary-section {
   margin-top: 80px;
-  flex: 1 1 auto;
   min-height: 0;
   max-height: 400px;
   overflow-y: auto;

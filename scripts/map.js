@@ -1,5 +1,6 @@
 import { MAP_API, ROUTE_KEY } from '../keys.js';
 import { distanceRound, formatTime } from './utils.js';
+import { generateChart } from './info-section.js';
 
 const atlasMap = `https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=${MAP_API}`
 const status_message = document.querySelector('.status-js');
@@ -69,6 +70,53 @@ async function getElevationProfile(coords) {
   }
 }
 
+async function generateElevationSection(e) {
+  const coordinates = e.routes[0].coordinates.map(coord => [coord[1], coord[0]]);
+  const elevationData = await getElevationProfile(coordinates);
+  const elevationArray = [];
+  elevationData.geometry.coordinates.forEach(dataPoint => elevationArray.push(dataPoint[2]));
+
+  generateChart(elevationArray);
+}
+
+async function generateBasicInfo(e, end) {
+  const route = e.routes[0].summary;
+  const reverseData = await reverseGeocode(end.lat, end.lng);
+  const destinationAddress = reverseData.address;
+
+  pathName.innerHTML = '';
+  if (destinationAddress.house) {
+    pathName.innerHTML += destinationAddress.house + ' ';
+  }
+  if (destinationAddress.road) {
+    pathName.innerHTML += destinationAddress.road + ', ';
+  }
+  if (destinationAddress.city) {
+    pathName.innerHTML += destinationAddress.city + ' ';
+  }
+  if (destinationAddress.postcode) {
+    pathName.innerHTML += `<span class="postal-code">${destinationAddress.postcode}</span>`;
+  }
+
+  distanceStat.innerHTML = `${distanceRound(route.totalDistance / 1000)}<span>${distanceRound((route.totalDistance / 1000 * kmToMi), false)}</span>`;
+  timeStat.innerHTML = `${formatTime(route.totalTime / 60)}`;
+}
+
+function generateItinerary(e) {
+  let totalTime = 0;
+  itinerarySection.innerHTML = '';
+  e.routes[0].instructions.forEach(instruction => {
+    totalTime += instruction.time / 60;
+    itinerarySection.innerHTML += `
+    <div class="instruction-group">
+      <p>${instruction.text}</p>
+      <div class="right-instructions">
+        <div class="instructions-distance">${distanceRound(instruction.distance / 1000)}</div>
+        <div class="instructions-time"> Total: ${formatTime(totalTime)}</div>
+      </div>
+    </div>`
+  });
+}
 
 showStatus('Pick a first point');
 map.on('click', function (e) {
@@ -104,48 +152,13 @@ map.on('click', function (e) {
       },
     })
       .on('routesfound', async function (e) {
-        const route = e.routes[0].summary;
-        const reverseData = await reverseGeocode(end.lat, end.lng);
-        const destinationAddress = reverseData.address;
-
-        pathName.innerHTML = '';
-        if (destinationAddress.house) {
-          pathName.innerHTML += destinationAddress.house + ' ';
-        }
-        if (destinationAddress.road) {
-          pathName.innerHTML += destinationAddress.road + ', ';
-        }
-        if (destinationAddress.city) {
-          pathName.innerHTML += destinationAddress.city + ' ';
-        }
-        if (destinationAddress.postcode) {
-          pathName.innerHTML += `<span class="postal-code">${destinationAddress.postcode}</span>`;
-        }
-
-        distanceStat.innerHTML = `${distanceRound(route.totalDistance / 1000)}<span>${distanceRound((route.totalDistance / 1000 * kmToMi), false)}</span>`;
-        timeStat.innerHTML = `${formatTime(route.totalTime / 60)}`;
+        await generateBasicInfo(e, end);
 
         showStatus('Route found!');
         ride_info.classList.add('basic-info-shown');
 
-        const coordinates = e.routes[0].coordinates.map(coord => [coord[1], coord[0]]);
-        const elevationData = await getElevationProfile(coordinates);
-        const elevationArray = [];
-        elevationData.geometry.coordinates.forEach(dataPoint => elevationArray.push(dataPoint[2]));
-
-        let totalTime = 0;
-        itinerarySection.innerHTML = '';
-        e.routes[0].instructions.forEach(instruction => {
-          totalTime += instruction.time / 60;
-          itinerarySection.innerHTML += `
-          <div class="instruction-group">
-            <p>${instruction.text}</p>
-            <div class="right-instructions">
-              <div class="instructions-distance">${distanceRound(instruction.distance / 1000)}</div>
-              <div class="instructions-time"> Total: ${formatTime(totalTime)}</div>
-            </div>
-          </div>`
-        });
+        generateItinerary(e);
+        generateElevationSection(e);
       })
       .on('routingerror', function () {
         showStatus('Sorry! Cannot find a route');
