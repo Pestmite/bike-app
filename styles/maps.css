@@ -51,7 +51,7 @@
   cursor: default;
 }
 
-.ride-info > div {
+.ride-info > section {
   width: 100%;
 }
 
@@ -69,12 +69,12 @@
   justify-content: space-between;
   align-items: center;
   font-weight: 800;
-  font-size: 20px;
 }
 
 .path-name {
   font-size: 22px;
   width: 80%;
+  margin: 8px 0px;
 }
 
 .postal-code {
@@ -88,6 +88,9 @@
   height: 30px;
   width: 30px;
   text-align: center;
+  border: none;
+  font-size: 20px;
+  font-weight: 800;
   border-radius: 50%;
 }
 
@@ -121,7 +124,7 @@
 .route-tag {
   background-color: rgb(0, 148, 0);
   border-radius: 20px;
-  margin-right: 6px;
+  margin: 0px 6px 0px 0px;
   padding: 3px 8px;
   color: white;
   font-weight: 500;
@@ -143,7 +146,20 @@
 }
 
 /* | Elevation Section */
+.elevation-section {
+  font-size: 18px;
+  margin-top: 50px;
+  transition: margin 0.3s;
+}
 
+.elevation-section-show {
+  margin-top: 0px;
+}
+
+.elevation-chart {
+  width: 100% !important;
+  max-width: 400px;
+}
 
 /* | Itinerary Section */
 .itinerary-section {

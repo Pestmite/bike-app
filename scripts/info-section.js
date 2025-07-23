@@ -1,20 +1,27 @@
 let newElevationChart;
 
-export function generateChart(elevationArray) {
+export function generateChart(elevationArray, totalDistanceMeters) {
   const canvas = document.getElementById('elevation-chart-js');
   const elevationChart = canvas.getContext('2d');
 
-  const labels = [];
-  for (let i = 0; i < elevationArray.length; i++) {
-    labels.push('');
-  }
+  const labels = elevationArray.map(() => '');
 
   if (newElevationChart) { newElevationChart.destroy() };
 
   const minValue = Math.min(...elevationArray);
   const maxValue = Math.max(...elevationArray);
-  const minChartY = Math.max(0, Math.floor(minValue - minValue * 0.1));
-  const maxChartY = Math.ceil(maxValue + maxValue * 0.1);
+  let minChartY;
+  let maxChartY;
+  if (maxValue - minValue > 100) {
+    minChartY = Math.max(0, Math.floor(minValue - minValue * 0.1));
+    maxChartY = Math.ceil(maxValue + maxValue * 0.1);
+  } else if (minValue < 50) {
+    minChartY = 0;
+    maxChartY = 100;
+  } else {
+    minChartY = minValue - 30;
+    maxChartY = maxValue + 30;
+  }
 
   let gradient = elevationChart.createLinearGradient(0, 0, 0, canvas.height);
   let borderColor;
@@ -62,6 +69,13 @@ export function generateChart(elevationArray) {
         x: {
           grid: {
             display: false
+          },
+          ticks: {
+            callback: function (index) {
+              const distanceKm = (index / (elevationArray.length - 1)) * (totalDistanceMeters / 1000);
+              return distanceKm.toFixed(2) + ' km';
+            },
+            maxTicksLimit: 10,
           }
         }
       }

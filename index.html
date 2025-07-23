@@ -28,35 +28,38 @@
 <body>
   <header class="header"></header>
 
-  <section class="body">
-    <div class="map-container">
+  <main class="body">
+    <section class="map-container">
       <div id="map" class="map">
         <div class="status status-js"></div>
         <div class="ride-info ride-info-js">
-        <div class="upper">
-          <div class="path-name"></div>
-          <div class="info-x">X</div>
-        </div>
+        <section class="upper">
+          <h2 class="path-name"></h2>
+          <button class="info-x">X</button>
+        </section>
 
-        <div class="stat-box-container">
+        <section class="stat-box-container">
           <div class="stat-box distance-js"></div>
           <div class="stat-box time-js"></div>
-        </div>
+        </section>
 
-        <div class="lower">
-          <div class="tag-section">
-            <div class="route-tag">Partially paved</div>
-            <div class="route-tag">Mostly Flat</div>
-          </div>
+        <section class="lower">
+          <section class="tag-section">
+            <p class="route-tag">Partially paved</p>
+            <p class="route-tag">Mostly Flat</p>
+          </section>
 
-          <div><button class="more-info">View itinerary</button></div>
-        </div>
+          <button class="more-info">View itinerary</button>
+        </section>
 
-        <canvas width="400" height="200" id="elevation-chart-js"></canvas>
-        <div class="itinerary-section"></div>
+        <section class="elevation-section">
+          <h3>Elevation Section</h3>
+          <canvas height="200px" class="elevation-chart" id="elevation-chart-js"></canvas>
+        </section>
+        <section class="itinerary-section"></section>
       </div>
     </div>
-  </section>
+  </main>
   
   <script type="module" src="scripts/general.js"></script>
   <script type="module" src="scripts/map.js"></script>

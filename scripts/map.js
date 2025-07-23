@@ -9,6 +9,7 @@ const infoX = document.querySelector('.info-x');
 const moreInfoButton = document.querySelector('.more-info');
 const distanceStat = document.querySelector('.distance-js');
 const timeStat = document.querySelector('.time-js');
+const elevationSection = document.querySelector('.elevation-section');
 const itinerarySection = document.querySelector('.itinerary-section');
 const pathName = document.querySelector('.path-name');
 
@@ -76,7 +77,7 @@ async function generateElevationSection(e) {
   const elevationArray = [];
   elevationData.geometry.coordinates.forEach(dataPoint => elevationArray.push(dataPoint[2]));
 
-  generateChart(elevationArray);
+  generateChart(elevationArray, e.routes[0].summary.totalDistance);
 }
 
 async function generateBasicInfo(e, end) {
@@ -152,6 +153,7 @@ map.on('click', function (e) {
       },
     })
       .on('routesfound', async function (e) {
+        showStatus('Finding Info...');
         await generateBasicInfo(e, end);
 
         showStatus('Route found!');
@@ -182,9 +184,11 @@ moreInfoButton.addEventListener('click', () => {
   if (moreInfoButton.innerHTML === 'View itinerary') {
     moreInfoButton.innerHTML = 'Hide itinerary';
     itinerarySection.classList.add('itinerary-show');
+    elevationSection.classList.add('elevation-section-show');
   } else {
     moreInfoButton.innerHTML = 'View itinerary';
     itinerarySection.classList.remove('itinerary-show');
+    elevationSection.classList.remove('elevation-section-show');
   }
 });
 
