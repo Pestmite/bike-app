@@ -175,7 +175,6 @@ map.on('click', function (e) {
       createMarker: () => null,
       router: new L.Routing.OpenRouteServiceV2(ROUTE_KEY, {
         profile: 'cycling-regular',
-        extra_info: ["steepness", "surface", "suitability", "waytype", "road_access"],
       }),
 
       routeWhileDragging: true,
