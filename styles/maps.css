@@ -119,7 +119,7 @@
 }
 
 /* || Tag section */
-.tag-section {
+.tag-section, .lower-tag-section {
   display: flex;
 }
 
@@ -202,6 +202,16 @@
 .elevation-map-shown {
   margin-bottom: 20px;
   height: 200px !important;
+}
+
+.lower-tag-section {
+  display: none;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+
+.show-tags {
+  display: flex;
 }
 
 /* | Itinerary Section */

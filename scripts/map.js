@@ -15,6 +15,9 @@ const pathName = document.querySelector('.path-name');
 const elevationButton = document.querySelector('.elevation-button-js');
 const elevationMap = document.querySelector('.elevation-chart');
 const loading = document.querySelector('.loading-done');
+const steepnessTag = document.querySelector('.steepness');
+const climbTag = document.querySelector('.climb');
+const lowerTags = document.querySelector('.lower-tag-section');
 
 const kmToMi = 0.621371;
 
@@ -70,6 +73,28 @@ async function getElevationProfile(coords) {
   }
 }
 
+function updateElevationTags(e, elevationArray) {
+  lowerTags.classList.remove('show-tags');
+  if (e.routes[0].summary.totalDistance / 1000 > 20) {
+    let totalAscent = 0;
+    let maxGrade = 0;
+
+    for (let i = 1; i < elevationArray.length; i++) {
+      const deltaElev = elevationArray[i] - elevationArray[i - 1];
+      const deltaDist = e.routes[0].summary.totalDistance / elevationArray.length;
+
+      if (deltaElev > 0) totalAscent += deltaElev;
+
+      const grade = Math.abs(deltaElev / deltaDist) * 100;
+      if (grade > maxGrade) maxGrade = grade;
+    }
+
+    climbTag.innerHTML = `Total Ascent: ${Math.round(totalAscent)} m`;
+    steepnessTag.innerHTML = `Max Grade: ${maxGrade.toFixed(1)}%`;
+    lowerTags.classList.add('show-tags');
+  }
+}
+
 async function generateElevationSection(e) {
   const maxPoints = 300;
   let coordinates = e.routes[0].coordinates.map(coord => [coord[1], coord[0]]);
@@ -81,11 +106,13 @@ async function generateElevationSection(e) {
   }
   const elevationData = await getElevationProfile(coordinates);
   if (!elevationData) {
-    elevationMap.innerHTML = "Could not load elevation data.";
+    elevationMap.innerHTML = 'Could not load elevation data.';
     return;
   }
   const elevationArray = [];
   elevationData.geometry.coordinates.forEach(dataPoint => elevationArray.push(dataPoint[2]));
+
+  updateElevationTags(e, elevationArray);
 
   generateChart(elevationArray, e.routes[0].summary.totalDistance);
 }
@@ -191,6 +218,7 @@ map.on('click', function (e) {
 
         generateItinerary(e);
         elevationMap.classList.remove('loaded');
+        lowerTags.classList.remove('show-tags');
         pathData = e;
       })
       .on('routingerror', function () {
@@ -206,6 +234,7 @@ infoX.addEventListener('click', () => {
   ride_info.classList.remove('basic-info-shown');
   ride_info.classList.remove('full-info-shown');
   elevationSection.classList.remove('elevation-section-show');
+  lowerTags.classList.add('show-tags');
   moreInfoButton.innerHTML = 'View itinerary';
   
   map.dragging.enable();
@@ -243,6 +272,7 @@ moreInfoButton.addEventListener('click', () => {
 elevationButton.addEventListener('click', async () => {
   elevationMap.classList.toggle('elevation-map-shown');
   elevationButton.classList.toggle('elevation-rotated');
+  lowerTags.classList.toggle('show-tags');
 
   if (!elevationMap.classList.contains('loaded')) {
     loading.classList.add('loading-elevation');
