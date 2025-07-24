@@ -18,6 +18,7 @@ const loading = document.querySelector('.loading-done');
 const steepnessTag = document.querySelector('.steepness');
 const climbTag = document.querySelector('.climb');
 const lowerTags = document.querySelector('.lower-tag-section');
+const rightHeader = document.querySelector('.header-right');
 
 const kmToMi = 0.621371;
 
@@ -291,4 +292,8 @@ elevationButton.addEventListener('click', async () => {
 
 ['wheel', 'touchstart', 'touchmove'].forEach(event => {
   itinerarySection.addEventListener(event, e => e.stopPropagation(), { passive: false });
+});
+
+['mousedown', 'click', 'dblclick', 'touchstart'].forEach(event => {
+  rightHeader.addEventListener(event, e => e.stopPropagation());
 });

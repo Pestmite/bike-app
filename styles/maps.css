@@ -15,7 +15,12 @@
   display: none !important;
 }
 
-/* Status Button */
+/* Map Header */
+.header {
+  display: flex;
+  align-items: center;
+}
+
 .status {
   position: absolute;
   top: 20px;
@@ -27,9 +32,49 @@
   color: var(--background);
   padding: 10px 20px;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
-  font-family: roboto, Arial, Helvetica, sans-serif;
   font-size: 14px;
   z-index: 500;
+}
+
+.header-right {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  top: 16px;
+  right: 20px;
+  border-radius: 32px;
+  z-index: 500;
+  width: 88px;
+  padding: 4px 6px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.256);
+}
+
+.home-icon {
+  display: flex;
+  justify-content: center;
+  height: 34px;
+  width: 34px;
+  background-color: rgba(0, 0, 0, 0.272);
+  border-radius: 50%;
+}
+
+.home-icon img {
+  height: 32px;
+  width: auto;
+}
+
+.profile-picture {
+  background-color: rgb(191,54,13);
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  color: white;
 }
 
 /* Info Section */

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+
+  <link rel="stylesheet" href="styles/maps.css">
+  <link rel="stylesheet" href="styles/general.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+  
+  <script src="node_modules/openrouteservice-js/dist/ors-js-client.umd.cjs"></script>
+  <script src="scripts/L.Routing.OpenRouteServiceV2.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <title>GoTrails | Maps</title>
+  <link rel="shortcut icon" href="images/bicycle.png" type="image/x-icon">
+</head>
+
+<body>
+  <main class="body">
+    <section class="map-container">
+      <div id="map" class="map">
+
+        <header>
+          <div class="status status-js"></div>
+          <div class="header-right">
+            <a href="index.html" class="home-icon">
+              <img src="images/home.png" alt="home-icon">
+            </a>
+            <div class="profile-picture">C</div>
+          </div>
+        </header>
+        
+        
+        <main class="ride-info ride-info-js">
+          <section class="upper">
+            <h2 class="path-name"></h2>
+            <button class="info-x">X</button>
+          </section>
+
+          <section class="stat-box-container">
+            <div class="stat-box distance-js"></div>
+            <div class="stat-box time-js"></div>
+          </section>
+
+          <section class="lower">
+            <section class="tag-section">
+              <p class="route-tag">74% of weekly goal</p>
+            </section>
+
+            <button class="more-info">View itinerary</button>
+          </section>
+
+          <section class="elevation-section">
+            <div class="elevation-upper">
+              <h3>Elevation Map</h3>
+              <button class="elevation-button-js">+</button>
+            </div>
+            <section class="lower-tag-section">
+              <p class="route-tag steepness"></p>
+              <p class="route-tag climb"></p>
+            </section>
+            <p class="loading-done">Loading...</p>
+            <canvas height="200px" width="400" class="elevation-chart" id="elevation-chart-js"></canvas>
+          </section>
+          <section class="itinerary-section"></section>
+        </main>
+      </div>
+    </div>
+  </main>
+  
+  <script type="module" src="scripts/map.js"></script>
+</body>
+</html>
