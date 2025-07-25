@@ -27,9 +27,9 @@
   align-items: center;
   top: 20px;
   left: 20px;
-  background-color: rgba(0, 0, 0, 0.256);
+  background-color: rgb(0, 148, 0);
   border-radius: 50%;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.303);
   z-index: 500;
   height: 40px;
   width: 40px;
@@ -40,9 +40,63 @@
   height: 28px;
 }
 
+.search-bar-js {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 20px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  z-index: 499;
+  height: 40px;
+  width: 184px;
+  padding: 0px 16px 0px 56px;
+  border: none;
+  cursor: text;
+  outline: none;
+}
+
+.search input:focus {
+  outline: none;
+}
+
+.results-box {
+  border-radius: 20px;
+  width: 216px;
+  background-color: white;
+  position: absolute;
+  top: 60px;
+  left: 20px;
+  max-height: 200px;
+  overflow-y: scroll;
+  display: none;
+}
+
+.results-shown {
+  display: block;
+}
+
+.search-results {
+  margin: 0px;
+  padding: 8px 16px;
+  list-style: none;
+}
+
+.search-results li {
+  height: auto;
+  padding: 8px 0px;
+  border-bottom: solid rgb(219, 219, 219);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-results li:hover {
+  background-color: rgb(238, 238, 238);
+}
+
 .status {
   position: absolute;
-  top: 20px;
+  bottom: 20px;
   left: 50%;
   text-align: center;
   transform: translateX(-50%);
@@ -53,6 +107,11 @@
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
   font-size: 14px;
   z-index: 500;
+  transition: bottom 0.3s;
+}
+
+.status-up {
+  bottom: 225px;
 }
 
 .header-right {
@@ -127,6 +186,7 @@
 
 .full-info-shown {
   bottom: 0;
+  top: 76px;
 }
 
 /* | X section */

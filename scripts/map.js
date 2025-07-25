@@ -3,7 +3,12 @@ import { distanceRound, formatTime } from './utils.js';
 import { generateChart } from './info-section.js';
 
 const atlasMap = `https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=${MAP_API}`
-const status_message = document.querySelector('.status-js');
+const statusMessage = document.querySelector('.status-js');
+const searchIcon = document.querySelector('.search');
+const searchBar = document.querySelector('.search-bar-js');
+const searchResults = document.querySelector('.search-results');
+const resultsBox = document.querySelector('.results-box');
+const rightHeader = document.querySelector('.header-right');
 const ride_info = document.querySelector('.ride-info-js');
 const infoX = document.querySelector('.info-x');
 const moreInfoButton = document.querySelector('.more-info');
@@ -16,12 +21,11 @@ const elevationButton = document.querySelector('.elevation-button-js');
 const elevationMap = document.querySelector('.elevation-chart');
 const loading = document.querySelector('.loading-done');
 const lowerTags = document.querySelector('.lower-tag-section');
-const rightHeader = document.querySelector('.header-right');
 
 const kmToMi = 0.621371;
 
 function showStatus(msg) {
-  status_message.innerHTML = msg;
+  statusMessage.innerHTML = msg;
 }
 
 const map = L.map('map', {
@@ -225,6 +229,7 @@ map.on('click', function (e) {
 
         showStatus('Route found!');
         ride_info.classList.add('basic-info-shown');
+        statusMessage.classList.add('status-up');
 
         generateItinerary(e);
         elevationMap.classList.remove('loaded');
@@ -243,6 +248,7 @@ map.on('click', function (e) {
 infoX.addEventListener('click', () => {
   ride_info.classList.remove('basic-info-shown');
   ride_info.classList.remove('full-info-shown');
+  statusMessage.classList.remove('status-up');
   elevationSection.classList.remove('elevation-section-show');
   lowerTags.classList.add('show-tags');
   moreInfoButton.innerHTML = 'View itinerary';
@@ -300,8 +306,67 @@ elevationButton.addEventListener('click', async () => {
 
 ['wheel', 'touchstart', 'touchmove'].forEach(event => {
   itinerarySection.addEventListener(event, e => e.stopPropagation(), { passive: false });
+  searchResults.addEventListener(event, e => e.stopPropagation(), { passive: false });
 });
 
 ['mousedown', 'click', 'dblclick', 'touchstart'].forEach(event => {
   rightHeader.addEventListener(event, e => e.stopPropagation());
+  searchBar.addEventListener(event, e => e.stopPropagation());
+  searchIcon.addEventListener(event, e => e.stopPropagation());
+  searchResults.addEventListener(event, e => e.stopPropagation());
+});
+
+function enterSearch(feature) {
+  const [lon, lat] = feature.geometry.coordinates;
+  const latlng = L.latLng(lat, lon);
+
+  map.setView(latlng, 15);
+  map.fire('click', { latlng, originalEvent: new Event('click') });
+
+  searchResults.innerHTML = '';
+  searchBar.value = '';
+  resultsBox.classList.remove('results-shown');
+}
+
+let debounceTimeout;
+let highestPlaceName = null;
+
+searchBar.addEventListener('input', () => {
+  const query = searchBar.value.trim();
+  if (!query) {
+    searchResults.innerHTML = '';
+    highestPlaceName = null;
+    resultsBox.classList.remove('results-shown');
+    return;
+  } else {
+    resultsBox.classList.add('results-shown');
+  }
+
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() => {
+    fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=10`)
+      .then(res => res.json())
+      .then(data => {
+        searchResults.innerHTML = '';
+        highestPlaceName = null;
+
+        data.features.forEach((feature, i) => {
+          if (!i) highestPlaceName = feature;
+          const li = document.createElement('li');
+          const place = feature.properties;
+
+          li.textContent += `${place.name || `${place.housenumber} ${place.street}` || 'Unnamed'}, `;
+          li.textContent += place.city || place.town ? `${place.city || place.town}, ` : '';
+          li.textContent += `${place.state || place.country}`;
+          li.addEventListener('click', () => enterSearch(feature));
+         
+          searchResults.appendChild(li);
+        });
+      });
+  }, 100);
+});
+
+searchIcon.addEventListener('click', () => enterSearch(highestPlaceName));
+searchBar.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter' && highestPlaceName && searchBar.value) { enterSearch(highestPlaceName) };
 });
