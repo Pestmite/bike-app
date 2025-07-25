@@ -263,6 +263,7 @@ infoX.addEventListener('click', () => {
 moreInfoButton.addEventListener('click', () => {
   ride_info.classList.toggle('full-info-shown');
   elevationSection.classList.toggle('elevation-section-show');
+  statusMessage.classList.toggle('status-up');
 
   if (ride_info.classList.contains('full-info-shown')) {
     moreInfoButton.innerHTML = 'Hide itinerary';
@@ -297,10 +298,12 @@ elevationButton.addEventListener('click', async () => {
     elevationMap.classList.add('loaded');
   }
   
-  if (elevationButton.innerHTML === '-') {
-    elevationButton.innerHTML = '+';
+  if (elevationButton.src.includes('minus-icon.png')) {
+    elevationButton.src = 'images/plus-icon.png';
+    elevationButton.alt = 'expand elevation';
   } else {
-    elevationButton.innerHTML = '-';
+    elevationButton.src = 'images/minus-icon.png';
+    elevationButton.alt = 'collapse elevation';
   }
 });
 
@@ -366,7 +369,9 @@ searchBar.addEventListener('input', () => {
   }, 100);
 });
 
-searchIcon.addEventListener('click', () => enterSearch(highestPlaceName));
+searchIcon.addEventListener('click', () => {
+  if (searchBar.value) enterSearch(highestPlaceName);
+});
 searchBar.addEventListener('keypress', (e) => {
   if (e.key === 'Enter' && highestPlaceName && searchBar.value) { enterSearch(highestPlaceName) };
 });
