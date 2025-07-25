@@ -4,6 +4,7 @@ import { generateChart } from './info-section.js';
 
 const atlasMap = `https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=${MAP_API}`
 const statusMessage = document.querySelector('.status-js');
+const useLocation = document.querySelector('.use-location');
 const searchIcon = document.querySelector('.search');
 const searchBar = document.querySelector('.search-bar-js');
 const searchResults = document.querySelector('.search-results');
@@ -35,6 +36,7 @@ const map = L.map('map', {
 
 let userCoords = [];
 let locationMarker;
+let userLocation = false;
 if (locationMarker) { map.removeLayer(locationMarker) };
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(
@@ -51,6 +53,10 @@ if (navigator.geolocation) {
         fillOpacity: 0.8,
         pane: 'markerPane'
       }).addTo(map);
+
+      statusMessage.classList.add('status-location');
+      useLocation.classList.add('location-shown');
+      userLocation = true;
     }
   );
 };
@@ -251,7 +257,13 @@ map.on('click', function (e) {
 
         showStatus('Route found!');
         ride_info.classList.add('basic-info-shown');
-        statusMessage.classList.add('status-up');
+        if (userLocation) {
+          statusMessage.classList.add('status-up-location');
+          useLocation.classList.add('location-up');
+        } else {
+          statusMessage.classList.add('status-up');
+        }
+        
 
         generateItinerary(e);
         elevationMap.classList.remove('loaded');
@@ -271,6 +283,8 @@ infoX.addEventListener('click', () => {
   ride_info.classList.remove('basic-info-shown');
   ride_info.classList.remove('full-info-shown');
   statusMessage.classList.remove('status-up');
+  statusMessage.classList.remove('status-up-location');
+  useLocation.classList.remove('location-up');
   elevationSection.classList.remove('elevation-section-show');
   lowerTags.classList.add('show-tags');
   moreInfoButton.innerHTML = 'View itinerary';
@@ -285,7 +299,13 @@ infoX.addEventListener('click', () => {
 moreInfoButton.addEventListener('click', () => {
   ride_info.classList.toggle('full-info-shown');
   elevationSection.classList.toggle('elevation-section-show');
-  statusMessage.classList.toggle('status-up');
+  if (userLocation) {
+    statusMessage.classList.toggle('status-up-location');
+    useLocation.classList.toggle('location-up');
+  } else {
+    statusMessage.classList.toggle('status-up');
+
+  }
 
   if (ride_info.classList.contains('full-info-shown')) {
     moreInfoButton.innerHTML = 'Hide itinerary';
@@ -339,6 +359,7 @@ elevationButton.addEventListener('click', async () => {
   searchBar.addEventListener(event, e => e.stopPropagation());
   searchIcon.addEventListener(event, e => e.stopPropagation());
   searchResults.addEventListener(event, e => e.stopPropagation());
+  useLocation.addEventListener(event, e => e.stopPropagation());
 });
 
 function enterSearch(feature) {
@@ -393,3 +414,13 @@ searchBar.addEventListener('input', () => {
 
 searchIcon.addEventListener('click', () => { if (searchBar.value) enterSearch(highestPlaceName) });
 searchBar.addEventListener('keypress', (e) => { if (e.key === 'Enter' && highestPlaceName && searchBar.value) { enterSearch(highestPlaceName) } });
+
+useLocation.addEventListener('click', () => {
+  if (userCoords.length) {
+    const latlng = L.latLng(userCoords[0], userCoords[1]);
+    map.fire('click', {
+      latlng,
+      originalEvent: new Event('click')
+    });
+  }
+});

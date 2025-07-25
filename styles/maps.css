@@ -110,8 +110,37 @@
   transition: bottom 0.3s;
 }
 
-.status-up {
+.status-location {
+  bottom: 48px;
+}
+
+.use-location {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 148, 0, 0.796);
+  border-radius: 20px;
+  color: var(--background);
+  padding: 4px 8px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.295);
+  font-size: 14px;
+  z-index: 500;
+  transition: bottom 0.3s;
+  display: none;
+  cursor: pointer;
+}
+
+.location-shown {
+  display: block;
+}
+
+.status-up, .location-up {
   bottom: 225px;
+}
+
+.status-up-location {
+  bottom: 259px;
 }
 
 .header-right {
