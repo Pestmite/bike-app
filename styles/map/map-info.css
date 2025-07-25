@@ -1,0 +1,224 @@
+.ride-info {
+  position: absolute;
+  bottom: -100vh;
+  left: 0px;
+  right: 0px;
+  height: 86vh;
+  border-radius: 50px 50px 0px 0px;
+  box-shadow: 0 0 6px rgba(49, 49, 49, 0.3);
+  z-index: 500;
+  background-color: rgb(255, 255, 255);
+  transition: bottom 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 40px;
+  cursor: default;
+}
+
+.ride-info > section {
+  width: 100%;
+}
+
+.basic-info-shown {
+  bottom: calc(-86vh + 185px);
+}
+
+.full-info-shown {
+  bottom: 0px;
+  height: calc(100vh - 96px);
+}
+
+/* | X section */
+.upper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 800;
+}
+
+.path-name {
+  font-size: 22px;
+  width: 80%;
+  margin: 8px 0px;
+}
+
+.postal-code {
+  color: rgb(142, 142, 142);
+  font-size: 18px;
+}
+
+.info-x {
+  cursor: pointer;
+  background-color: rgb(226, 226, 226);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  width: 32px;
+  border: none;
+  font-size: 20px;
+  font-weight: 800;
+  border-radius: 50%;
+}
+
+.info-x img {
+  height: 20px;
+}
+
+/* | Overview Info */
+.stat-box-container {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.stat-box span {
+  color: rgb(142, 142, 142);
+  font-size: 1rem;
+  margin-left: 6px;
+}
+
+/* | General Lower Section */
+.lower {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* || Tag section */
+.tag-section, .lower-tag-section {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.route-tag {
+  background-color: rgb(0, 148, 0);
+  border-radius: 20px;
+  margin: 0px 6px 0px 0px;
+  padding: 3px 8px;
+  color: white;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-bottom: 10px;
+}
+
+/* | Itinerary Button */
+.more-info {
+  background-color: rgb(0, 153, 255);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 16px;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.more-info:hover {
+  cursor: pointer;
+  background-color: rgb(56, 168, 243);
+}
+
+/* | Elevation Section */
+.elevation-section {
+  font-size: 18px;
+  margin-top: 50px;
+  transition: margin 0.3s ease;
+  border-bottom: solid rgb(219, 219, 219);
+}
+
+.elevation-section-show {
+  margin-top: 0px;
+}
+
+.elevation-upper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.elevation-section h3 {
+  margin: 20px 0px 12px 0px;
+}
+
+.elevation-upper img {
+  height: 24px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.5s ease;
+}
+
+.elevation-rotated {
+  transform: rotate(180deg);
+}
+
+.loading-done {
+  display: none;
+}
+
+.loading-elevation {
+  display: block;
+}
+
+.elevation-chart {
+  width: 100% !important;
+  height: 0 !important;
+  overflow: hidden;
+  max-width: 400px;
+  transition: height 0.4s ease;
+}
+
+.elevation-map-shown {
+  margin-bottom: 20px;
+  height: 200px !important;
+}
+
+.lower-tag-section {
+  display: none;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+
+.show-tags {
+  display: flex;
+}
+
+/* | Itinerary Section */
+.itinerary-section {
+  margin-top: 20px;
+  min-height: 0;
+  max-height: 800px;
+  overflow-y: auto;
+  width: 100%;
+  transition: margin 0.3s ease;
+}
+
+.instruction-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0px;
+  border-bottom: solid rgb(219, 219, 219);
+}
+
+.instruction-group p {
+  font-size: 20px;
+  margin: 0px;
+  width: 60%;
+}
+
+.right-instructions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.instructions-time {
+  color: rgb(142, 142, 142);
+  font-size: 0.8rem;
+  margin-left: 6px;
+}
