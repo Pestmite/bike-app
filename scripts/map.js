@@ -31,7 +31,29 @@ function showStatus(msg) {
 const map = L.map('map', {
   attributionControl: false,
   zoomControl: false,
-}).setView([45.5019, -73.5674], 13); 
+}).setView([45.5019, -73.5674], 13);
+
+let userCoords = [];
+let locationMarker;
+if (locationMarker) { map.removeLayer(locationMarker) };
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      userCoords = [position.coords.latitude, position.coords.longitude]
+      map.setView(userCoords, 16);
+
+      locationMarker = L.circleMarker(userCoords, {
+        radius: 8,
+        color: 'rgb(0, 153, 255)',
+        fillColor: 'rgba(0, 153, 255, 0.66)',
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8,
+        pane: 'markerPane'
+      }).addTo(map);
+    }
+  );
+};
 
 L.tileLayer(atlasMap, {
   maxZoom: 20,
@@ -369,9 +391,5 @@ searchBar.addEventListener('input', () => {
   }, 100);
 });
 
-searchIcon.addEventListener('click', () => {
-  if (searchBar.value) enterSearch(highestPlaceName);
-});
-searchBar.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter' && highestPlaceName && searchBar.value) { enterSearch(highestPlaceName) };
-});
+searchIcon.addEventListener('click', () => { if (searchBar.value) enterSearch(highestPlaceName) });
+searchBar.addEventListener('keypress', (e) => { if (e.key === 'Enter' && highestPlaceName && searchBar.value) { enterSearch(highestPlaceName) } });
