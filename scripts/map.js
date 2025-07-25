@@ -15,8 +15,6 @@ const pathName = document.querySelector('.path-name');
 const elevationButton = document.querySelector('.elevation-button-js');
 const elevationMap = document.querySelector('.elevation-chart');
 const loading = document.querySelector('.loading-done');
-const steepnessTag = document.querySelector('.steepness');
-const climbTag = document.querySelector('.climb');
 const lowerTags = document.querySelector('.lower-tag-section');
 const rightHeader = document.querySelector('.header-right');
 
@@ -76,23 +74,34 @@ async function getElevationProfile(coords) {
 
 function updateElevationTags(e, elevationArray) {
   lowerTags.classList.remove('show-tags');
-  if (e.routes[0].summary.totalDistance / 1000 > 20) {
-    let totalAscent = 0;
-    let maxGrade = 0;
+  lowerTags.innerHTML = '';
+  let totalAscent = 0;
+  let maxGrade = 0;
+  let averageGrade = 0;
+  let totalDescent = 0
 
-    for (let i = 1; i < elevationArray.length; i++) {
-      const deltaElev = elevationArray[i] - elevationArray[i - 1];
-      const deltaDist = e.routes[0].summary.totalDistance / elevationArray.length;
+  for (let i = 1; i < elevationArray.length; i++) {
+    const deltaElev = elevationArray[i] - elevationArray[i - 1];
+    const deltaDist = e.routes[0].summary.totalDistance / (elevationArray.length - 1);
 
-      if (deltaElev > 0) totalAscent += deltaElev;
+    if (deltaElev > 0) totalAscent += deltaElev;
+    if (deltaElev < 0) totalDescent += deltaElev;
 
-      const grade = Math.abs(deltaElev / deltaDist) * 100;
-      if (grade > maxGrade) maxGrade = grade;
-    }
+    const grade = Math.abs(deltaElev / deltaDist) * 100;
+    if (grade > maxGrade) maxGrade = grade;
 
-    climbTag.innerHTML = `Total Ascent: ${Math.round(totalAscent)} m`;
-    steepnessTag.innerHTML = `Max Grade: ${maxGrade.toFixed(1)}%`;
-    lowerTags.classList.add('show-tags');
+    averageGrade += grade
+  }
+
+  averageGrade /= (elevationArray.length - 1);
+
+  lowerTags.innerHTML += `<p class="route-tag">Total Ascent: ${Math.round(totalAscent)} m</p>`;
+  lowerTags.innerHTML += `<p class="route-tag">Total Descent: ${Math.round(Math.abs(totalDescent))} m</p>`;
+  lowerTags.innerHTML += `<p class="route-tag">Average Grade: ${averageGrade.toFixed(1)}%</p>`;
+  lowerTags.classList.add('show-tags');
+  
+  if (e.routes[0].summary.totalDistance / 1000 > 50) {
+    lowerTags.innerHTML += `<p class="route-tag">Max Grade: ${maxGrade.toFixed(1)}%</p>`;
   }
 }
 
@@ -282,7 +291,6 @@ elevationButton.addEventListener('click', async () => {
     elevationMap.classList.add('loaded');
   }
   
-
   if (elevationButton.innerHTML === '-') {
     elevationButton.innerHTML = '+';
   } else {

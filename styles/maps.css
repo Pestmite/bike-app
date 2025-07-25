@@ -54,6 +54,7 @@
 .home-icon {
   display: flex;
   justify-content: center;
+  align-items: center;
   height: 34px;
   width: 34px;
   background-color: rgba(0, 0, 0, 0.272);
@@ -61,7 +62,7 @@
 }
 
 .home-icon img {
-  height: 32px;
+  height: 24px;
   width: auto;
 }
 
@@ -73,7 +74,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 16px;
+  font-size: 18px;
   color: white;
 }
 
@@ -166,6 +167,7 @@
 /* || Tag section */
 .tag-section, .lower-tag-section {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .route-tag {
@@ -175,6 +177,8 @@
   padding: 3px 8px;
   color: white;
   font-weight: 500;
+  white-space: nowrap;
+  margin-bottom: 10px;
 }
 
 /* | Itinerary Button */
