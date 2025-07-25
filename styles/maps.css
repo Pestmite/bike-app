@@ -61,15 +61,16 @@
 }
 
 .results-box {
-  border-radius: 20px;
-  width: 216px;
+  border-radius: 0px 0px 20px 20px;
+  width: 226px;
   background-color: white;
   position: absolute;
-  top: 60px;
-  left: 20px;
+  top: 56px;
+  left: 36px;
   max-height: 200px;
   overflow-y: scroll;
   display: none;
+  z-index: 490;
 }
 
 .results-shown {
