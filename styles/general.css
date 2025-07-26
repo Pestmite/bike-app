@@ -16,6 +16,10 @@ body.active {
   overflow-y: hidden;
 }
 
+* {
+  outline: none;
+}
+
 .profile-picture {
   background-color: rgb(191,54,13);
   height: 36px;

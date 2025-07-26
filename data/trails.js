@@ -31,6 +31,39 @@ export async function getElevationProfile(coords) {
 	}
 }
 
+function createId() {
+	const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+	let trailIds = trailData.map(trail => trail.id);
+
+	let trailId = '';
+	do {
+		trailId = '';
+		for (let i = 0; i < 10; i++) {
+			trailId += characters[Math.round(Math.random() * characters.length)];
+		};
+	} while (trailIds.includes(trailId));
+
+	return trailId;
+};
+
+export async function createElevationArray(route) {
+	const maxPoints = 300;
+  let coordinates = route.coordinates.map(coord => [coord[1], coord[0]]);
+
+	// For performance on long paths
+  if (coordinates.length > maxPoints) {
+    const step = Math.floor(coordinates.length / maxPoints);
+    coordinates = coordinates.filter((_, i) => i % step === 0);
+	}
+	
+	const elevationData = await getElevationProfile(coordinates);
+	if (!elevationData) return [];
+
+	let elevationArray = [];
+	elevationData.geometry.coordinates.forEach(dataPoint => elevationArray.push(dataPoint[2]));
+	return elevationArray;
+}
+
 export async function savePath(route) {
 	trailData = JSON.parse(localStorage.getItem('trailData')) || [];
 
@@ -39,36 +72,25 @@ export async function savePath(route) {
 	const trailDifficulty = 'Easy';
 	const trailLocation = 'Montreal, Quebec';
 
-	const trailId = trailName.replaceAll(" ", "-").toLocaleLowerCase();
 	const stars = 5;
 	const publisher = 'GoTrails';
 	const tags = [trailDifficulty, 'loop', publisher, stars];
-
-	const maxPoints = 300;
-  let coordinates = route.coordinates.map(coord => [coord[1], coord[0]]);
-
-  if (coordinates.length > maxPoints) {
-    const step = Math.floor(coordinates.length / maxPoints);
-    coordinates = coordinates.filter((_, i) => i % step === 0);
-  }
-	const elevationData = await getElevationProfile(coordinates);
-	let elevationArray = [];
-	elevationData.geometry.coordinates.forEach(dataPoint => elevationArray.push(dataPoint[2]));
+	const imageName = trailName.replaceAll(" ", "-").toLocaleLowerCase();
   
   let newTrail = {
     "name": trailName,
-		"id": trailId,
+		"id": createId(),
 		"location": trailLocation,
     "description": trailDescription,
     "length": route.summary.totalDistance,
     "estimated_time": route.summary.totalTime,
     "difficulty": trailDifficulty,
-		"images": trailId,
+		"images": imageName,
 		"rating": stars,
 		"publisher": publisher,
     "tags": tags,
 		"path": route.coordinates,
-		"elevation": elevationArray,
+		"elevation": await createElevationArray(route),
   };
 
   const existingIndex = trailData.findIndex(trail => trail.id === trailId);
@@ -83,7 +105,7 @@ export async function savePath(route) {
 export let trailData = [
 	{
 			"name": "Camillien Houde Loop",
-			"id": "camillien-houde-loop",
+			"id": "3BtgiXs0tJ",
 			"location": "Montreal, Quebec",
 			"description": "Steep climb in the heart of Mount Royal",
 			"length": 4153.199999999999,
@@ -1025,7 +1047,7 @@ export let trailData = [
 	},
 	{
 			"name": "Le P'tit Train du Nord Linear Park",
-			"id": "le-p'tit-train-du-nord-linear-park",
+			"id": "8EjDMOe2X1",
 			"location": "Laurentians, Quebec",
 			"description": "Scenic 234-Km bike path in the Laurentians",
 			"length": 234000,
@@ -12727,7 +12749,7 @@ export let trailData = [
 	},
 	{
 			"name": "Jean Drapeau Park Loop",
-			"id": "jean-drapeau-park-loop",
+			"id": "0XLbsDmZLq",
 			"location": "Montreal, Quebec",
 			"description": "Uninterrupted river views near Montreal's Lachine canal",
 			"length": 66726.40000000002,

@@ -2,6 +2,7 @@ import { trailData } from "../data/trails.js";
 import { distanceRound, formatTime } from "./utils.js";
 
 const searchIcon = document.querySelector('.search-icon-js');
+const trailSection = document.querySelector('.trail-section');
 const searchBar = document.querySelector('.search-bar');
 const body = document.querySelector('main');
 

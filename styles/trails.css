@@ -57,6 +57,7 @@ main {
 
 .trail-section {
   margin: 12px 12px 36px 12px;
+  cursor: pointer;
 }
 
 .trail-image-container {
@@ -100,15 +101,17 @@ main {
   align-items: baseline;
   margin: 10px 0px 16px 0px;
   font-weight: 600;
+  white-space: nowrap;
+  flex-wrap: wrap;
 }
 
 .trail-section h2 {
   font-size: 24px;
-  margin: 0;
+  margin: 0 10px 0 0;
 }
 
 .trail-location {
-  margin: 0px 0px 0px 10px;
+  margin: 0;
   color: rgb(130, 130, 130);
 }
 

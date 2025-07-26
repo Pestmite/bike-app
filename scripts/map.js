@@ -1,7 +1,7 @@
 import { MAP_API, ROUTE_KEY } from '../keys.js';
 import { distanceRound, formatTime } from './utils.js';
 import { generateChart } from './info-section.js';
-import { savePath, getElevationProfile } from '../data/trails.js';
+import { savePath, createElevationArray } from '../data/trails.js';
 
 const atlasMap = `https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=${MAP_API}`
 const statusMessage = document.querySelector('.status-js');
@@ -25,7 +25,7 @@ const loading = document.querySelector('.loading-done');
 const lowerTags = document.querySelector('.lower-tag-section');
 
 const kmToMi = 0.621371;
-const devMode = true;
+const devMode = false;
 let waypoints = [];
 
 function showStatus(msg) {
@@ -110,21 +110,7 @@ function updateElevationTags(e, elevationArray) {
 }
 
 async function generateElevationSection(e) {
-  const maxPoints = 300;
-  let coordinates = e.routes[0].coordinates.map(coord => [coord[1], coord[0]]);
-
-  // For performance on long paths
-  if (coordinates.length > maxPoints) {
-    const step = Math.floor(coordinates.length / maxPoints);
-    coordinates = coordinates.filter((_, i) => i % step === 0);
-  }
-  const elevationData = await getElevationProfile(coordinates);
-  if (!elevationData) {
-    elevationMap.innerHTML = 'Could not load elevation data.';
-    return;
-  }
-  const elevationArray = [];
-  elevationData.geometry.coordinates.forEach(dataPoint => elevationArray.push(dataPoint[2]));
+  let elevationArray = await createElevationArray(e.routes[0]);
 
   updateElevationTags(e, elevationArray);
 
