@@ -25,6 +25,8 @@ const loading = document.querySelector('.loading-done');
 const lowerTags = document.querySelector('.lower-tag-section');
 
 const kmToMi = 0.621371;
+const appendToRouteMode = true;
+let waypoints = [];
 
 function showStatus(msg) {
   statusMessage.innerHTML = msg;
@@ -207,7 +209,77 @@ let pathData;
 showStatus('Pick a first point');
 map.on('click', function (e) {
   if (ride_info.contains(e.originalEvent.target)) return
-  if (!start) {
+
+  if (appendToRouteMode) {
+    const newPoint = e.latlng;
+    waypoints.push(newPoint);
+
+    if (waypoints.length === 1) {
+      startPoint = L.circleMarker(newPoint, {
+        radius: 8,
+        color: 'rgb(0, 153, 255)',
+        fillColor: 'rgb(207, 207, 207)',
+        weight: 4,
+        opacity: 1,
+        fillOpacity: 1,
+        pane: 'markerPane'
+      }).addTo(map);
+
+      showStatus('Now click to add an endpoint');
+    } else {
+      L.marker(newPoint).addTo(map);
+
+      if (routingControl) map.removeControl(routingControl);
+
+      showStatus('Finding the best route...');
+
+      routingControl = L.Routing.control({
+        waypoints: waypoints,
+        createMarker: (i, wp, nWps) => {
+          if (i === 0 || i === nWps - 1) return null;
+          return L.marker(wp.latLng, { draggable: true });
+        },
+        draggableWaypoints: true,
+        addWaypoints: true,
+        router: new L.Routing.OpenRouteServiceV2(ROUTE_KEY, {
+          profile: 'cycling-regular',
+        }),
+        routeWhileDragging: true,
+        lineOptions: {
+          styles: [{ color: 'rgb(0, 153, 255)', opacity: 0.8, weight: 5 }]
+        },
+      })
+        .on('routesfound', async function (e) {
+          showStatus('Finding Info...');
+          await generateBasicInfo(e, waypoints[waypoints.length - 1]);
+
+          showStatus('Route found!');
+          ride_info.classList.add('basic-info-shown');
+          if (userLocation) {
+            statusMessage.classList.add('status-up-location');
+            useLocation.classList.add('location-up');
+          } else {
+            statusMessage.classList.add('status-up');
+          }
+
+          generateItinerary(e);
+          elevationMap.classList.remove('loaded');
+          elevationMap.classList.remove('elevation-map-shown');
+          elevationButton.classList.remove('elevation-rotated');
+          lowerTags.classList.remove('show-tags');
+          pathData = e;
+
+          savePath(e.routes[0]);
+        })
+        .on('routingerror', function () {
+          showStatus('Sorry! Cannot find a route');
+        })
+        .addTo(map);
+    }
+
+    return; // Prevent default route-building flow
+  } else {
+    if (!start) {
     if (startPoint) map.removeLayer(startPoint);
     if (endPoint) map.removeLayer(endPoint);
     start = e.latlng;
@@ -244,9 +316,7 @@ map.on('click', function (e) {
       waypoints: [start, end],
       createMarker: (i, wp, nWps) => {
         if (i === 0 || i === nWps - 1) return null;
-        return L.marker(wp.latLng, {
-          draggable: true
-        });
+        return L.marker(wp.latLng, {draggable: true});
       },
       draggableWaypoints: true,
       addWaypoints: true,
@@ -279,7 +349,7 @@ map.on('click', function (e) {
         lowerTags.classList.remove('show-tags');
         pathData = e;
 
-        // savePath(e.routes[0]);
+        savePath(e.routes[0]);
       })
       .on('routingerror', function () {
         showStatus('Sorry! Cannot find a route');
@@ -288,6 +358,8 @@ map.on('click', function (e) {
     
     start = null;
   }
+  }
+  
 });
 
 infoX.addEventListener('click', () => {
