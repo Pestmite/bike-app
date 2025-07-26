@@ -22,32 +22,31 @@ document.addEventListener('click', (e) => {
 trailData.forEach(trail => {
   body.innerHTML += `
   <section class="trail-section" id="${trail.id}">
-      <div class="trail-image-container">
-        <img src="images/trail images/${trail.images}.jpg" alt="${trail.name} image">
+    <div class="trail-image-container">
+      <img src="images/trail images/${trail.images}.jpg" alt="${trail.name} image">
+    </div>
+    <article class="trail-text">
+      <div class="upper-trail">
+        <div class="upper-trail-text">
+          <h2>${trail.name}</h2>
+          <p class="trail-location">Montreal, Quebec</p>
+        </div>
+        <div class="trail-menu-group">
+          <img class="menu-icon-js" src="images/menu.png" alt="more option">
+          <div class="trail-menu">
+            <p><img src="images/save-icon.png" alt="save icon">Save</p>
+            <p><img src="images/download.png" alt="download icon">Download</p>
+            <p><img class="report" src="images/flag.png" alt="flag icon">Report</p>
+          </div>
+        </div> 
       </div>
-      <article class="trail-text">
-        <div class="upper-trail">
-          <div class="upper-trail-text">
-            <h2>${trail.name}</h2>
-            <p class="trail-location">Montreal, Quebec</p>
-          </div>
-          <div class="trail-menu-group">
-            <img class="menu-icon-js" src="images/menu.png" alt="more option">
-            <div class="trail-menu">
-              <p><img src="images/save-icon.png" alt="save icon">Save</p>
-              <p><img src="images/download.png" alt="download icon">Download</p>
-              <p><img class="report" src="images/flag.png" alt="flag icon">Report</p>
-            </div>
-          </div>
-          
-        </div>
         
-        <div class="trail-info">
-          <p>${formatTime(trail.estimated_time / 60)}</p>
-          <p>${distanceRound(trail.length / 1000)}</p>
-          <p><img src="images/star.png" alt="star-icon">4.6</p>
-          <p>${trail.difficulty}</p>
-        </div>
-      </article>
+      <div class="trail-info">
+        <p>${formatTime(trail.estimated_time / 60)}</p>
+        <p>${distanceRound(trail.length / 1000)}</p>
+        <p><img src="images/star.png" alt="star-icon">${trail.rating}</p>
+        <p>${trail.difficulty}</p>
+      </div>
+    </article>
     </section>`;
 });

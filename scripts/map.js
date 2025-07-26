@@ -1,7 +1,7 @@
 import { MAP_API, ROUTE_KEY } from '../keys.js';
 import { distanceRound, formatTime } from './utils.js';
 import { generateChart } from './info-section.js';
-import { savePath } from '../data/trails.js';
+import { savePath, getElevationProfile } from '../data/trails.js';
 
 const atlasMap = `https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=${MAP_API}`
 const statusMessage = document.querySelector('.status-js');
@@ -25,7 +25,7 @@ const loading = document.querySelector('.loading-done');
 const lowerTags = document.querySelector('.lower-tag-section');
 
 const kmToMi = 0.621371;
-const appendToRouteMode = true;
+const devMode = true;
 let waypoints = [];
 
 function showStatus(msg) {
@@ -74,37 +74,6 @@ async function reverseGeocode(lat, lon) {
   const response = await fetch(url);
   const data = await response.json();
   return data;
-}
-
-async function getElevationProfile(coords) {
-  const url = 'https://api.openrouteservice.org/elevation/line';
-
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Authorization': ROUTE_KEY,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        format_in: 'geojson',
-        format_out: 'geojson',
-        geometry: {
-          type: 'LineString',
-          coordinates: coords
-        }
-      }),
-    });
-
-    if (!res.ok) {
-      throw new Error('Elevation API error');
-    }
-
-    return await res.json();
-  } catch (err) {
-    console.error('Elevation error:', err);
-    return null;
-  }
 }
 
 function updateElevationTags(e, elevationArray) {
@@ -184,6 +153,76 @@ async function generateBasicInfo(e, end) {
   timeStat.innerHTML = `${formatTime(route.totalTime / 60)}`;
 }
 
+function devRoute(e) {
+  const newPoint = e.latlng;
+  waypoints.push(newPoint);
+
+  if (waypoints.length === 1) {
+    startPoint = L.circleMarker(newPoint, {
+      radius: 8,
+      color: 'rgb(0, 153, 255)',
+      fillColor: 'rgb(207, 207, 207)',
+      weight: 4,
+      opacity: 1,
+      fillOpacity: 1,
+      pane: 'markerPane'
+    }).addTo(map);
+
+    showStatus('Now click to add an endpoint');
+  } else {
+    L.marker(newPoint).addTo(map);
+
+    if (routingControl) map.removeControl(routingControl);
+
+    showStatus('Finding the best route...');
+
+    routingControl = L.Routing.control({
+      waypoints: waypoints,
+      createMarker: (i, wp, nWps) => {
+        if (i === 0 || i === nWps - 1) return null;
+        return L.marker(wp.latLng, { draggable: true });
+      },
+      draggableWaypoints: true,
+      addWaypoints: true,
+      router: new L.Routing.OpenRouteServiceV2(ROUTE_KEY, {
+        profile: 'cycling-regular',
+      }),
+      routeWhileDragging: true,
+      lineOptions: {
+        styles: [{ color: 'rgb(0, 153, 255)', opacity: 0.8, weight: 5 }]
+      },
+    })
+      .on('routesfound', async function (e) {
+        showStatus('Finding Info...');
+        await generateBasicInfo(e, waypoints[waypoints.length - 1]);
+
+        showStatus('Route found!');
+        ride_info.classList.add('basic-info-shown');
+        if (userLocation) {
+          statusMessage.classList.add('status-up-location');
+          useLocation.classList.add('location-up');
+        } else {
+          statusMessage.classList.add('status-up');
+        }
+
+        generateItinerary(e);
+        elevationMap.classList.remove('loaded');
+        elevationMap.classList.remove('elevation-map-shown');
+        elevationButton.classList.remove('elevation-rotated');
+        lowerTags.classList.remove('show-tags');
+        pathData = e;
+
+        savePath(e.routes[0]);
+      })
+      .on('routingerror', function () {
+        showStatus('Sorry! Cannot find a route');
+      })
+      .addTo(map);
+  }
+
+  return;
+}
+
 function generateItinerary(e) {
   let totalTime = 0;
   itinerarySection.innerHTML = '';
@@ -210,75 +249,8 @@ showStatus('Pick a first point');
 map.on('click', function (e) {
   if (ride_info.contains(e.originalEvent.target)) return
 
-  if (appendToRouteMode) {
-    const newPoint = e.latlng;
-    waypoints.push(newPoint);
-
-    if (waypoints.length === 1) {
-      startPoint = L.circleMarker(newPoint, {
-        radius: 8,
-        color: 'rgb(0, 153, 255)',
-        fillColor: 'rgb(207, 207, 207)',
-        weight: 4,
-        opacity: 1,
-        fillOpacity: 1,
-        pane: 'markerPane'
-      }).addTo(map);
-
-      showStatus('Now click to add an endpoint');
-    } else {
-      L.marker(newPoint).addTo(map);
-
-      if (routingControl) map.removeControl(routingControl);
-
-      showStatus('Finding the best route...');
-
-      routingControl = L.Routing.control({
-        waypoints: waypoints,
-        createMarker: (i, wp, nWps) => {
-          if (i === 0 || i === nWps - 1) return null;
-          return L.marker(wp.latLng, { draggable: true });
-        },
-        draggableWaypoints: true,
-        addWaypoints: true,
-        router: new L.Routing.OpenRouteServiceV2(ROUTE_KEY, {
-          profile: 'cycling-regular',
-        }),
-        routeWhileDragging: true,
-        lineOptions: {
-          styles: [{ color: 'rgb(0, 153, 255)', opacity: 0.8, weight: 5 }]
-        },
-      })
-        .on('routesfound', async function (e) {
-          showStatus('Finding Info...');
-          await generateBasicInfo(e, waypoints[waypoints.length - 1]);
-
-          showStatus('Route found!');
-          ride_info.classList.add('basic-info-shown');
-          if (userLocation) {
-            statusMessage.classList.add('status-up-location');
-            useLocation.classList.add('location-up');
-          } else {
-            statusMessage.classList.add('status-up');
-          }
-
-          generateItinerary(e);
-          elevationMap.classList.remove('loaded');
-          elevationMap.classList.remove('elevation-map-shown');
-          elevationButton.classList.remove('elevation-rotated');
-          lowerTags.classList.remove('show-tags');
-          pathData = e;
-
-          savePath(e.routes[0]);
-        })
-        .on('routingerror', function () {
-          showStatus('Sorry! Cannot find a route');
-        })
-        .addTo(map);
-    }
-
-    return; // Prevent default route-building flow
-  } else {
+  if (devMode) { devRoute(e) }
+  else {
     if (!start) {
     if (startPoint) map.removeLayer(startPoint);
     if (endPoint) map.removeLayer(endPoint);
@@ -348,8 +320,6 @@ map.on('click', function (e) {
         elevationButton.classList.remove('elevation-rotated');
         lowerTags.classList.remove('show-tags');
         pathData = e;
-
-        savePath(e.routes[0]);
       })
       .on('routingerror', function () {
         showStatus('Sorry! Cannot find a route');
