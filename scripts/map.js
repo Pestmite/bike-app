@@ -264,9 +264,10 @@ map.on('click', function (e) {
           statusMessage.classList.add('status-up');
         }
         
-
         generateItinerary(e);
         elevationMap.classList.remove('loaded');
+        elevationMap.classList.remove('elevation-map-shown');
+        elevationButton.classList.remove('elevation-rotated');
         lowerTags.classList.remove('show-tags');
         pathData = e;
       })
