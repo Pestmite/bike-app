@@ -13,6 +13,12 @@
 </head>
 
 <body>
+  <header>
+    <div class="search-container">
+      <img class="search-icon-js" src="images/search.png" alt="search-icon">
+    </div>
+    <input class="search-bar" type="text" placeholder="Search for a trail..." id="search-bar">
+  </header>
   <main>
     <section class="trail-section">
       <img src="images/trail images/mount royal.jpg" alt="mount royal trail">
@@ -22,7 +28,15 @@
             <h2>Mount Royal Loop</h2>
             <p class="trail-location">Montreal, Quebec</p>
           </div>
-          <img src="images/menu.png" alt="more option">
+          <div class="trail-menu-group">
+            <img class="menu-icon-js" src="images/menu.png" alt="more option">
+            <div class="trail-menu">
+              <p><img src="images/save-icon.png" alt="save icon">Save</p>
+              <p><img src="images/download.png" alt="download icon">Download</p>
+              <p><img class="report" src="images/flag.png" alt="flag icon">Report</p>
+            </div>
+          </div>
+          
         </div>
         
         <div class="trail-info">
@@ -40,5 +54,7 @@
     <a href="maps.html"><img src="images/maps.png" alt="map page"></a>
     <a href="stats.html"><img src="images/stats.png" alt="stat page"></a>
   </nav>
+
+  <script type="module" src="scripts/trails.js"></script>
 </body>
 </html>
