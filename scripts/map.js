@@ -1,6 +1,7 @@
 import { MAP_API, ROUTE_KEY } from '../keys.js';
 import { distanceRound, formatTime } from './utils.js';
 import { generateChart } from './info-section.js';
+import { savePath } from '../data/trails.js';
 
 const atlasMap = `https://tile.thunderforest.com/atlas/{z}/{x}/{y}.png?apikey=${MAP_API}`
 const statusMessage = document.querySelector('.status-js');
@@ -241,7 +242,14 @@ map.on('click', function (e) {
     showStatus('Finding the best route...');
     routingControl = L.Routing.control({
       waypoints: [start, end],
-      createMarker: () => null,
+      createMarker: (i, wp, nWps) => {
+        if (i === 0 || i === nWps - 1) return null;
+        return L.marker(wp.latLng, {
+          draggable: true
+        });
+      },
+      draggableWaypoints: true,
+      addWaypoints: true,
       router: new L.Routing.OpenRouteServiceV2(ROUTE_KEY, {
         profile: 'cycling-regular',
       }),
@@ -270,6 +278,8 @@ map.on('click', function (e) {
         elevationButton.classList.remove('elevation-rotated');
         lowerTags.classList.remove('show-tags');
         pathData = e;
+
+        // savePath(e.routes[0]);
       })
       .on('routingerror', function () {
         showStatus('Sorry! Cannot find a route');
