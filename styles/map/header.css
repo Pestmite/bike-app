@@ -155,16 +155,3 @@
   height: 24px;
   width: auto;
 }
-
-.profile-picture {
-  background-color: rgb(191,54,13);
-  height: 36px;
-  width: 36px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 18px;
-  color: white;
-  cursor: pointer;
-}
